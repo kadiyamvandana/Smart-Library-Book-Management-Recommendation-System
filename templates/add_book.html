@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Add a title — BookWise{% endblock %}
+{% block breadcrumb %}Add a title{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+  <div>
+    <span class="eyebrow"><span class="eyebrow-dot"></span> COLLECTION MANAGEMENT</span>
+    <h1>Add a new title</h1>
+    <p>Bring a new book into your catalogue and make it available to your readers.</p>
+  </div>
+</section>
+
+<section class="form-layout">
+  <div class="form-panel">
+    <div class="form-panel-heading">
+      <span class="form-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.75h11.5A2.5 2.5 0 0 1 19 7.25v12H7.5A2.5 2.5 0 0 1 5 16.75v-12Z"/><path d="M5 16.75a2.5 2.5 0 0 1 2.5-2.5H19"/></svg></span>
+      <div><h2>Title details</h2><p>Enter the information readers will use to find this book.</p></div>
+    </div>
+    <form method="post" class="book-form">
+      <label class="form-field">
+        <span>Book title <span class="required-mark">*</span></span>
+        <input name="title" placeholder="e.g. The Design of Everyday Things" required>
+      </label>
+      <label class="form-field">
+        <span>Author <span class="required-mark">*</span></span>
+        <input name="author" placeholder="e.g. Don Norman" required>
+      </label>
+      <div class="form-row">
+        <label class="form-field">
+          <span>Category <span class="required-mark">*</span></span>
+          <input name="category" placeholder="e.g. Design, Fiction" required>
+        </label>
+        <label class="form-field">
+          <span>Number of copies <span class="required-mark">*</span></span>
+          <input name="copies" type="number" min="0" value="1" required>
+        </label>
+      </div>
+      <label class="form-field">
+        <span>Format</span>
+        <select name="kind"><option value="print">Printed book</option><option value="ebook">E-book</option></select>
+      </label>
+      <div class="form-actions">
+        <a class="button button-secondary" href="{{ url_for('index') }}">Cancel</a>
+        <button class="button button-primary" type="submit">Add to catalogue <span aria-hidden="true">→</span></button>
+      </div>
+    </form>
+  </div>
+  <aside class="form-aside">
+    <span class="aside-sparkle" aria-hidden="true">✳</span>
+    <span class="section-kicker">A LITTLE TIP</span>
+    <h2>Make it easy to find.</h2>
+    <p>Use a clear title and the author's full name so readers can find exactly what they're looking for.</p>
+    <div class="aside-divider"></div>
+    <span class="aside-note"><span class="online-dot"></span> Your catalogue updates as soon as you save.</span>
+  </aside>
+</section>
+{% endblock %}

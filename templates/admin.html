@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Loans &amp; reports — BookWise{% endblock %}
+{% block breadcrumb %}Loans &amp; reports{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+  <div>
+    <span class="eyebrow"><span class="eyebrow-dot"></span> MANAGEMENT</span>
+    <h1>Loans &amp; reports</h1>
+    <p>Keep track of circulation and see what is happening across your collection.</p>
+  </div>
+  <a class="button button-primary" href="{{ url_for('add_book') }}">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Add a title
+  </a>
+</section>
+
+<section class="stats-grid admin-stats" aria-label="Library statistics">
+  <article class="stat-card">
+    <div class="stat-card-top"><span class="stat-icon icon-violet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.75h11.5A2.5 2.5 0 0 1 19 7.25v12H7.5A2.5 2.5 0 0 1 5 16.75v-12Z"/><path d="M5 16.75a2.5 2.5 0 0 1 2.5-2.5H19"/></svg></span><span class="stat-label">UNIQUE TITLES</span></div>
+    <div class="stat-value">{{ stats.titles }}</div>
+    <div class="stat-caption">Titles in your catalogue</div>
+  </article>
+  <article class="stat-card">
+    <div class="stat-card-top"><span class="stat-icon icon-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5 12 3l7.5 3.5v11L12 21l-7.5-3.5v-11Z"/><path d="m4.8 6.7 7.2 3.4 7.2-3.4M12 10.2V21"/></svg></span><span class="stat-label">AVAILABLE COPIES</span></div>
+    <div class="stat-value">{{ stats.copies }}</div>
+    <div class="stat-caption">Ready to be checked out</div>
+  </article>
+  <article class="stat-card">
+    <div class="stat-card-top"><span class="stat-icon icon-amber"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11a2 2 0 0 1 2 2v13H8.5a2 2 0 0 1-2-2v-13ZM6.5 17.5a2 2 0 0 1 2-2h11"/></svg></span><span class="stat-label">ACTIVE LOANS</span></div>
+    <div class="stat-value">{{ stats.active_loans }}</div>
+    <div class="stat-caption">Awaiting a return</div>
+  </article>
+  <article class="stat-card">
+    <div class="stat-card-top"><span class="stat-icon icon-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 18.5v-7M10 18.5v-13M15.5 18.5v-9M21 18.5v-5"/></svg></span><span class="stat-label">TOTAL CHECKOUTS</span></div>
+    <div class="stat-value">{{ stats.loans }}</div>
+    <div class="stat-caption">All-time loan records</div>
+  </article>
+</section>
+
+<section class="data-panel">
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">CIRCULATION</span>
+      <h2>Loan history</h2>
+      <p>View checkouts and record returns for outstanding loans.</p>
+    </div>
+    <span class="table-count">{{ loans|length }} {{ 'record' if loans|length == 1 else 'records' }}</span>
+  </div>
+
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead><tr><th>BOOK</th><th>READER</th><th>CHECKED OUT</th><th>STATUS</th><th class="actions-heading">ACTION</th></tr></thead>
+      <tbody>
+        {% for l in loans %}
+          <tr>
+            <td><span class="table-book">{{ l.title }}</span></td>
+            <td>{{ l.borrower }}</td>
+            <td>{{ l.borrowed_at }}</td>
+            <td><span class="loan-status {{ 'status-active' if not l.returned_at else 'status-returned' }}"><span></span>{{ 'On loan' if not l.returned_at else 'Returned' }}</span></td>
+            <td class="actions-cell">
+              {% if not l.returned_at %}
+                <form method="post" action="{{ url_for('return_book', book_id=l.book_id) }}">
+                  <button class="return-button" type="submit">Record return</button>
+                </form>
+              {% else %}
+                <span class="completed-label">Complete</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5"><div class="table-empty"><span>No loans recorded yet.</span><small>Once a reader checks out a title, it will appear here.</small></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

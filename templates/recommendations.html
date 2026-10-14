@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Recommendations — BookWise{% endblock %}
+{% block breadcrumb %}Recommendations{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+  <div>
+    <span class="eyebrow"><span class="eyebrow-dot"></span> READER DISCOVERY</span>
+    <h1>Find the next good read.</h1>
+    <p>Browse available titles, or pick a category to bring the most relevant books to the top.</p>
+  </div>
+</section>
+
+<section class="recommendation-panel">
+  <div class="recommendation-heading">
+    <span class="recommendation-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></span>
+    <div><span class="section-kicker">PERSONALISE YOUR DISCOVERY</span><h2>Choose a category</h2></div>
+  </div>
+  <form class="recommendation-filter" method="get" action="{{ url_for('recommendations') }}">
+    <label class="select-input recommendation-select">
+      <span class="sr-only">Choose a category</span>
+      <select name="category">
+        <option value="">Any category</option>
+        {% for c in categories %}
+          <option value="{{ c }}" {% if c == category %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+    </label>
+    <button class="button button-dark" type="submit">Show recommendations <span aria-hidden="true">→</span></button>
+  </form>
+</section>
+
+<section class="recommendation-results">
+  <div class="section-heading">
+    <div><span class="section-kicker">READY TO DISCOVER</span><h2>{{ 'Matches in ' ~ category if category else 'Available right now' }}</h2><p>These titles are currently available in your collection.</p></div>
+    <span class="table-count">{{ books|length }} {{ 'title' if books|length == 1 else 'titles' }}</span>
+  </div>
+  <div class="book-grid recommendation-grid">
+    {% for b in books %}
+      <article class="book-card">
+        <div class="book-cover {{ ['cover-lilac', 'cover-sage', 'cover-peach', 'cover-blue'][loop.index0 % 4] }}">
+          <span class="cover-type">{{ 'DIGITAL EDITION' if b.item_type == 'ebook' else 'PRINT EDITION' }}</span>
+          <span class="cover-title">{{ b.title }}</span>
+          <span class="cover-decoration" aria-hidden="true"></span>
+          <span class="cover-category">{{ b.category }}</span>
+        </div>
+        <div class="book-info">
+          <span class="availability is-available"><span class="availability-dot"></span>{{ b.copies }} available</span>
+          <h3>{{ b.title }}</h3>
+          <p class="book-author">by {{ b.author }}</p>
+          <form method="post" action="{{ url_for('borrow', book_id=b.id) }}" class="borrow-form">
+            <label class="sr-only" for="reader-{{ b.id }}">Reader name for {{ b.title }}</label>
+            <input class="borrower-input" id="reader-{{ b.id }}" name="borrower" placeholder="Reader's name" required>
+            <button type="submit" class="button button-borrow">Check out <span aria-hidden="true">→</span></button>
+          </form>
+        </div>
+      </article>
+    {% else %}
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4.75h11.5A2.5 2.5 0 0 1 19 7.25v12H7.5A2.5 2.5 0 0 1 5 16.75v-12Z"/><path d="M5 16.75a2.5 2.5 0 0 1 2.5-2.5H19"/></svg></span>
+        <h3>No recommendations just yet</h3>
+        <p>{% if category %}There are no available titles in this category. Try another one.{% else %}Add titles to your catalogue to help readers discover their next favourite.{% endif %}</p>
+        <a class="button button-secondary" href="{{ url_for('index') }}">Browse the catalogue</a>
+      </div>
+    {% endfor %}
+  </div>
+  <p class="recommendation-note">Recommendations are sorted by category match using a simple rules-based approach.</p>
+</section>
+{% endblock %}
